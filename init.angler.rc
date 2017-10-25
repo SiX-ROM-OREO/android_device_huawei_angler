@@ -143,6 +143,9 @@ on boot
     # Wifi firmware reload path
     chown wifi wifi /sys/module/bcmdhd/parameters/firmware_path
 
+    # High Brightness Mode
+    chown system system /sys/devices/virtual/graphics/fb0/hbm
+
 on property:init.svc.per_mgr=running
     start per_proxy
 
@@ -357,7 +360,7 @@ service thermal-engine /vendor/bin/thermal-engine
 # QMUX must be in multiple groups to support external process connections
 service qmuxd /vendor/bin/qmuxd
     class main
-    user radio
+    user root
     group radio audio bluetooth wakelock gps
     writepid /dev/cpuset/system-background/tasks
 
@@ -415,14 +418,14 @@ service wpa_supplicant /vendor/bin/hw/wpa_supplicant \
     disabled
     oneshot
 
-service imsqmidaemon /system/bin/imsqmidaemon
+service imsqmidaemon /vendor/bin/imsqmidaemon
     class main
     user system
     socket ims_qmid stream 0660 system radio
     group radio net_raw log diag
     writepid /dev/cpuset/system-background/tasks
 
-service imsdatadaemon /system/bin/imsdatadaemon
+service imsdatadaemon /vendor/bin/imsdatadaemon
     class main
     user system
     socket ims_datad stream 0660 system radio
@@ -433,7 +436,7 @@ service imsdatadaemon /system/bin/imsdatadaemon
 on property:sys.ims.QMI_DAEMON_STATUS=1
     start imsdatadaemon
 
-service imscmservice /system/bin/imscmservice
+service imscmservice /vendor/bin/imscmservice
     class main
     user system
     group radio net_raw diag diag log
